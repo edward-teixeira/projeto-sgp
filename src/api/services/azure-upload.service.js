@@ -5,8 +5,8 @@ const { DefaultAzureCredential } = require('@azure/identity');
 // eslint-disable-next-line no-unused-vars
 const defaultAzureCredential = new DefaultAzureCredential();
 const sharedKeyCredential = new StorageSharedKeyCredential(
-  process.env.AZURE_ACCOUNT,
-  process.env.AZURE_KEY,
+  'projectaln',
+  'vne8USspMvj/86mZxjoA1gnPimhroSWKXoojvZDZ/7WECiMBrKsCrnE2BCq5RyRMOrUJYpeO6n/xarsfmpFbBg==',
 );
 
 module.exports.deleteBlob = async (blobPath) => {

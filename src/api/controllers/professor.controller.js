@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const { omit } = require('lodash');
 const Professor = require('../models/professor.model');
 const User = require('../models/user.model');
+const uploadService = require('../services/azure-upload.service');
 
 /**
  * Load user and append to req.
@@ -21,7 +22,14 @@ exports.load = async (req, res, next, id) => {
  * Get user
  * @public
  */
-exports.get = (req, res) => res.json(req.locals.user.transform());
+exports.get = async (req, res, next) => {
+  try {
+    const professor = await Professor.findById(req.params.professorId);
+    res.json(professor.transform());
+  } catch (error) {
+    return next(error);
+  }
+};
 
 /**
  * Get logged in user info
@@ -69,34 +77,49 @@ exports.create = async (req, res, next) => {
  */
 exports.replace = async (req, res, next) => {
   try {
-    const professor = Professor.findById(req.params.id);
+    const professor = await Professor.findById(req.params.professorId);
+    if (req.file && (req.file.url.split('?')[0] !== professor.foto)) {
+      await uploadService.deleteBlob(professor.foto);
+      // eslint-disable-next-line prefer-destructuring
+      professor.foto = req.file.url.split('?')[0];
+    }
     const newProfessor = new Professor(req.body);
     const newProfessorObject = omit(newProfessor.toObject(), '_id');
 
     await professor.updateOne(newProfessorObject, { override: true, upsert: true });
-    const savedUser = await Professor.findById(professor._id);
+    const savedProfessor = await Professor.findById(professor._id);
 
-    res.json(savedUser.transform());
+    res.json(savedProfessor.transform());
   } catch (error) {
     next(Professor.checkDuplicateEmail(error));
   }
 };
 
 /**
- * Update existing user
+ * Update existing professor
  * @public
  */
-exports.update = (req, res, next) => {
-  const updatedUser = omit(req.body);
-  const user = Object.assign(req.locals.user, updatedUser);
+exports.update = async (req, res, next) => {
+  try {
+    const professor = await Professor.findById(req.params.professorId);
+    if (req.file && (req.file.url.split('?')[0] !== professor.foto)) {
+      await uploadService.deleteBlob(professor.foto);
+      // eslint-disable-next-line prefer-destructuring
+      professor.foto = req.file.url.split('?')[0];
+    }
+    const newProfessor = new Professor(req.body);
+    const newProfessorObject = omit(newProfessor.toObject(), '_id');
 
-  user.save()
-    .then(savedUser => res.json(savedUser.transform()))
-    .catch(e => next(Professor.checkDuplicateEmail(e)));
+    await professor.updateOne(newProfessorObject, { override: true, upsert: true });
+    const savedProfessor = await Professor.findById(professor._id);
+    res.json(savedProfessor.transform());
+  } catch (error) {
+    next(Professor.checkDuplicateEmail(error));
+  }
 };
 
 /**
- * Get user list
+ * Get professor list
  * @public
  */
 exports.list = async (req, res, next) => {
@@ -110,12 +133,14 @@ exports.list = async (req, res, next) => {
 };
 
 /**
- * Delete user
+ * Delete professor
  * @public
  */
-exports.remove = (req, res, next) => {
+exports.remove = async (req, res, next) => {
   const professor = Professor.findById(req.params.id);
-
+  if (professor.foto) {
+    await uploadService.deleteBlob(professor.foto);
+  }
   professor.remove()
     .then(() => res.status(httpStatus.NO_CONTENT).end())
     .catch(e => next(e));

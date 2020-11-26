@@ -81,21 +81,28 @@ router
   .post(authorize(ADMIN), validate(createProfessor), uploadAzure.single('foto'), controller.create);
 
 router
-  .route('/:userId')
+  .route('/:professorId')
   /**
-   * @api {get} v1/users/:id Get Professor
+   * @api {get} v1/professor/:professorId Get Professor
    * @apiDescription Get professor information
    * @apiVersion 1.0.0
    * @apiName GetProfessor
    * @apiGroup Professor
-   * @apiPermission all
+   * @apiPermission user
    *
    * @apiHeader {String} Authorization   User's access token
    *
-   * @apiSuccess {String}  id         User's id
-   * @apiSuccess {String}  name       User's name
-   * @apiSuccess {String}  email      User's email
-   * @apiSuccess {String}  role       User's role
+   * @apiSuccess {String}  id         Professor's id
+   * @apiSuccess {String}  nome       Professors nome
+   * @apiSuccess {String}  foto       Professor's foto
+   * @apiSuccess {String}  formacao   Professor's formacao
+   * @apiSuccess {String}  lattes     Professor's lattes
+   * @apiSuccess {String}  situacao   Professor's situacao
+   * @apiSuccess {String}  cargos     Professor's cargos
+   * @apiSuccess {String}  cargaHoraria     Professor's carga horaria
+   * @apiSuccess {String}  portaria    Professor's portaria
+   * @apiSuccess {String}  matricula    Professor's matricula
+   * @apiSuccess {String}  email      Professor's email
    * @apiSuccess {Date}    createdAt  Timestamp
    *
    * @apiError (Unauthorized 401) Unauthorized Only authenticated users can access the data
@@ -113,26 +120,28 @@ router
    *
    * @apiHeader {String} Authorization   User's access token
    *
-   * @apiParam  {String}             email     User's email
-   * @apiParam  {String{6..128}}     password  User's password
-   * @apiParam  {String{..128}}      [name]    User's name
-   * @apiParam  {String=user,admin}  [role]    User's role
-   * (You must be an admin to change the user's role)
-   *
-   * @apiSuccess {String}  id         User's id
-   * @apiSuccess {String}  name       User's name
-   * @apiSuccess {String}  email      User's email
-   * @apiSuccess {String}  role       User's role
+   * @apiSuccess {String}  id         Professor's id
+   * @apiSuccess {String}  nome       Professors nome
+   * @apiSuccess {String}  foto       Professor's foto
+   * @apiSuccess {String}  formacao   Professor's formacao
+   * @apiSuccess {String}  lattes     Professor's lattes
+   * @apiSuccess {String}  situacao   Professor's situacao
+   * @apiSuccess {String}  cargos     Professor's cargos
+   * @apiSuccess {String}  cargaHoraria     Professor's carga horaria
+   * @apiSuccess {String}  portaria    Professor's portaria
+   * @apiSuccess {String}  matricula    Professor's matricula
+   * @apiSuccess {String}  email      Professor's email
    * @apiSuccess {Date}    createdAt  Timestamp
+   * (You must be an admin to change the user's role)
    *
    * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
    * @apiError (Unauthorized 401) Unauthorized Only authenticated users can modify the data
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can modify the data
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
-  .put(authorize(LOGGED_USER), controller.replace)
+  .put(authorize(ADMIN), validate(replaceProfessor), uploadAzure.single('foto'), controller.replace)
   /**
-   * @api {patch} v1/users/:id Update Professor
+   * @api {patch} v1/users/professorId Update Professor
    * @apiDescription Update some fields of a user document
    * @apiVersion 1.0.0
    * @apiName UpdateProfessor
@@ -141,11 +150,18 @@ router
    *
    * @apiHeader {String} Authorization   User's access token
    *
-   * @apiParam  {String}             email     User's email
-   * @apiParam  {String{6..128}}     password  User's password
-   * @apiParam  {String{..128}}      [name]    User's name
-   * @apiParam  {String=user,admin}  [role]    User's role
-   * (You must be an admin to change the user's role)
+   * @apiSuccess {String}  id         Professor's id
+   * @apiSuccess {String}  nome       Professors nome
+   * @apiSuccess {String}  foto       Professor's foto
+   * @apiSuccess {String}  formacao   Professor's formacao
+   * @apiSuccess {String}  lattes     Professor's lattes
+   * @apiSuccess {String}  situacao   Professor's situacao
+   * @apiSuccess {String}  cargos     Professor's cargos
+   * @apiSuccess {String}  cargaHoraria     Professor's carga horaria
+   * @apiSuccess {String}  portaria    Professor's portaria
+   * @apiSuccess {String}  matricula    Professor's matricula
+   * @apiSuccess {String}  email      Professor's email
+   * @apiSuccess {Date}    createdAt  Timestamp
    *
    * @apiSuccess {String}  id         User's id
    * @apiSuccess {String}  name       User's name
@@ -158,7 +174,7 @@ router
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can modify the data
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
-  .patch(authorize(LOGGED_USER), controller.update)
+  .patch(authorize(ADMIN), validate(updateProfessor), uploadAzure.single('foto'), controller.update)
   /**
    * @api {patch} v1/users/:id Delete Professor
    * @apiDescription Delete a Professor
@@ -175,7 +191,7 @@ router
    * @apiError (Forbidden 403)    Forbidden     Only user with same id or admins can delete the data
    * @apiError (Not Found 404)    NotFound      User does not exist
    */
-  .delete(authorize(LOGGED_USER), controller.remove);
+  .delete(authorize(ADMIN), controller.remove);
 
 
 module.exports = router;

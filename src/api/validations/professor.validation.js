@@ -41,7 +41,7 @@ module.exports = {
       email: Joi.string().email().required(),
     },
     params: {
-      userId: Joi.string().regex(/^[a-fA-F0-9]{24}$/).required(),
+      professorId: Joi.string().regex(/^[a-fA-F0-9]{24}$/).required(),
     },
   },
 
@@ -58,7 +58,7 @@ module.exports = {
       email: Joi.string().email().required(),
     },
     params: {
-      userId: Joi.string().regex(/^[a-fA-F0-9]{24}$/).required(),
+      professorId: Joi.string().regex(/^[a-fA-F0-9]{24}$/).required(),
     },
   },
 };
