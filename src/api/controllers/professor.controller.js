@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
-const Professor = require('../models/professor.model');
 const User = require('../models/user.model');
+const Professor = require('../models/professor.model');
 const uploadService = require('../services/azure-upload.service');
 
 /**
@@ -19,12 +19,13 @@ exports.load = async (req, res, next, id) => {
 };
 
 /**
- * Get user
+ * Get professor
  * @public
  */
 exports.get = async (req, res, next) => {
   try {
     const professor = await Professor.findById(req.params.professorId);
+    res.status(httpStatus.OK);
     res.json(professor.transform());
   } catch (error) {
     return next(error);
@@ -47,7 +48,7 @@ exports.create = async (req, res, next) => {
       const prof = new Professor(req.body);
       const savedProf = await prof.save();
       res.status(httpStatus.CREATED);
-      return res.json(savedProf.transform());
+      res.json(savedProf.transform());
     }
     const fileName = req.file.url.split('?')[0];
     const newProfessor = {
@@ -65,7 +66,7 @@ exports.create = async (req, res, next) => {
     const prof = new Professor(newProfessor);
     const savedProf = await prof.save();
     res.status(httpStatus.CREATED);
-    return res.json(savedProf.transform());
+    res.json(savedProf.transform());
   } catch (error) {
     next(Professor.checkDuplicateEmail(error));
   }
@@ -88,7 +89,7 @@ exports.replace = async (req, res, next) => {
 
     await professor.updateOne(newProfessorObject, { override: true, upsert: true });
     const savedProfessor = await Professor.findById(professor._id);
-
+    res.status(httpStatus.OK);
     res.json(savedProfessor.transform());
   } catch (error) {
     next(Professor.checkDuplicateEmail(error));
@@ -112,6 +113,7 @@ exports.update = async (req, res, next) => {
 
     await professor.updateOne(newProfessorObject, { override: true, upsert: true });
     const savedProfessor = await Professor.findById(professor._id);
+    res.status(httpStatus.OK);
     res.json(savedProfessor.transform());
   } catch (error) {
     next(Professor.checkDuplicateEmail(error));
@@ -126,6 +128,7 @@ exports.list = async (req, res, next) => {
   try {
     const professors = await Professor.list(req.query);
     const transformedProfessors = professors.map(prof => prof.transform());
+    res.status(httpStatus.OK);
     res.json(transformedProfessors);
   } catch (error) {
     next(error);
