@@ -1,50 +1,6 @@
 const mongoose = require('mongoose');
 const { omitBy, isNil } = require('lodash');
 
-// turmas: [{
-//   type: mongoose.SchemaTypes.ObjectId,
-//   descricao: {
-//     type: String,
-//     trim: true,
-//     maxlength: 300,
-//   },
-//   alias: {
-//     type: String,
-//     maxlength: 200,
-//   },
-//   turno: {
-//     type: String,
-//     required: true,
-//     maxlength: 200,
-//   },
-//   materias: [{
-//     type: mongoose.SchemaTypes.ObjectId,
-//     nome: {
-//       type: String,
-//       trim: true,
-//     },
-//     descricao: {
-//       type: String,
-//       trim: true,
-//     },
-//     diasMinistrados: [{
-//       type: mongoose.SchemaTypes.ObjectId,
-//       diaDaSemana: String,
-//       trim: true,
-//       horarioInicio: {
-//         type: Date,
-//       },
-//       horarioFim: {
-//         type: Date,
-//       },
-//     }],
-//     professores: [{
-//       type: mongoose.SchemaTypes.ObjectId,
-//       ref: 'Professor',
-//     }],
-//   }],
-// }],
-
 const cursoSchema = new mongoose.Schema({
   nome: {
     type: String,
@@ -59,6 +15,12 @@ const cursoSchema = new mongoose.Schema({
   },
   periodos: {
     type: Number,
+  },
+  turno: {
+    type: String,
+    trim: true,
+    required: true,
+    maxlength: 200,
   },
   coordenador: {
     type: mongoose.Types.ObjectId,

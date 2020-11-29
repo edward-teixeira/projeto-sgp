@@ -41,6 +41,7 @@ module.exports = {
       nome: Joi.string().min(3).max(200).required(),
       descricao: Joi.string().max(300),
       periodos: Joi.number().required().min(1),
+      turno: Joi.string().max(200).required(),
       coordenador: Joi.string().regex(/^[a-fA-F0-9]{24}$/).required(),
     },
     params: {
